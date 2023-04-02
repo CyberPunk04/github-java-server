@@ -254,7 +254,7 @@ public class TeacherController {
             p = new Person();
             p.setPersonId(personId);
             p.setNum(num);
-            p.setType("1");
+            p.setType("2");
             personRepository.saveAndFlush(p);  //插入新的Person记录
             String password = encoder.encode("123456");
             u= new User();
@@ -314,8 +314,8 @@ public class TeacherController {
             c = s.getCourse();
             m.put("teacherNum",s.getStudent().getPerson().getNum());
             m.put("scoreId",s.getScoreId());
-            m.put("courseNum", c.getNum());
-            m.put("courseName", c.getName());
+            m.put("courseNum", c.getCourseNum());
+            m.put("courseName", c.getCourseName());
             m.put("credit", c.getCredit());
             m.put("mark", s.getMark());
             m.put("ranking", s.getRanking());

@@ -45,7 +45,7 @@ public class ScoreController {
         OptionItem item;
         List<OptionItem> itemList = new ArrayList();
         for (Course c : sList) {
-            itemList.add(new OptionItem(c.getCourseId(), c.getNum(), c.getNum()+"-"+c.getName()));
+            itemList.add(new OptionItem(c.getCourseId(), c.getCourseNum(), c.getCourseNum()+"-"+c.getCourseName()));
         }
         return new OptionItemList(0, itemList);
     }
@@ -69,8 +69,8 @@ public class ScoreController {
             m.put("studentNum",s.getStudent().getPerson().getNum());
             m.put("studentName",s.getStudent().getPerson().getName());
             m.put("className",s.getStudent().getClassName());
-            m.put("courseNum",s.getCourse().getNum());
-            m.put("courseName",s.getCourse().getName());
+            m.put("courseNum",s.getCourse().getCourseNum());
+            m.put("courseName",s.getCourse().getCourseName());
             m.put("credit",s.getCourse().getCredit());
             m.put("mark",s.getMark());
             dataList.add(m);

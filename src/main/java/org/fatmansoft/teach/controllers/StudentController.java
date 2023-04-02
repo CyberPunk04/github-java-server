@@ -314,8 +314,8 @@ public class StudentController {
             c = s.getCourse();
             m.put("studentNum",s.getStudent().getPerson().getNum());
             m.put("scoreId",s.getScoreId());
-            m.put("courseNum", c.getNum());
-            m.put("courseName", c.getName());
+            m.put("courseNum", c.getCourseNum());
+            m.put("courseName", c.getCourseName());
             m.put("credit", c.getCredit());
             m.put("mark", s.getMark());
             m.put("ranking", s.getRanking());
