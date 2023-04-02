@@ -7,8 +7,7 @@ import java.io.IOException;
 
 public class TextFileInputDemo
 {
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
        try
        {
            BufferedReader inputStream = 
