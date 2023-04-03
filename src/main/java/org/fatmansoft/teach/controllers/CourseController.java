@@ -168,9 +168,11 @@ public class CourseController {
             }
         }
         if(c == null) {
-            courseId = getNewCourseId(); //获取Person新的主键，这个是线程同步问题;
-            c.setCourseId(courseId);
-            c.setCourseNum(num);
+            courseId = getNewCourseId();//获取Person新的主键，这个是线程同步问题;
+            Course c1 = new Course();
+            c1.setCourseId(courseId);
+            c1.setCourseNum(num);
+            c = c1;
             courseRepository.saveAndFlush(c);  //插入新的Course记录
         }else {
            courseId = c.getCourseId();
@@ -185,7 +187,7 @@ public class CourseController {
             c.setCourseNum(num);  //设置属性
         }
 //        p.setName(CommonMethod.getString(form,"name"));
-        c.setCourseName((String)form.get("name"));
+        c.setCourseName((String)form.get("courseName"));
         c.setCourseHour(CommonMethod.getString(form,"courseHour"));
         c.setCourseType(CommonMethod.getString(form,"courseType"));
         c.setCredit(CommonMethod.getString(form,"credit"));
