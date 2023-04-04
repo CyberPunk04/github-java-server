@@ -31,11 +31,17 @@ public class Course {
 
     @Size(max = 50)
     private String courseName;
+    @Size(max = 50)
     private String courseHour;
+    @Size(max = 50)
     private String courseType;
+    @Size(max = 50)
     private String credit;
+    @Size(max = 50)
     private String courseDesc;
+    @Size(max = 50)
     private String courseStatus;
+    @Size(max = 50)
     private String courseRemark;
 
     @ManyToOne

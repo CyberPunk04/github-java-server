@@ -137,7 +137,7 @@ public class StudentController {
     }
 
     /**
-     *  getStudentMapList 根据输入参数查询得到学生数据的 Map List集合 参数为空 查出说有学生， 参数不为空，查出人员编号或人员名称 包含输入字符串的学生
+     *  getStudentMapList 根据输入参数查询得到学生数据的 Map List集合 参数为空 查出所有学生， 参数不为空，查出人员编号或人员名称 包含输入字符串的学生
      * @param numName 输入参数
      * @return  Map List 集合
      */

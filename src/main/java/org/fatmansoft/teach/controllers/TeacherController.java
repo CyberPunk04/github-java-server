@@ -262,7 +262,7 @@ public class TeacherController {
             u.setPerson(p);
             u.setUserName(num);
             u.setPassword(password);
-            u.setUserType(userTypeRepository.findByName(EUserType.ROLE_STUDENT));
+            u.setUserType(userTypeRepository.findByName(EUserType.ROLE_TEACHER));
             userRepository.saveAndFlush(u); //插入新的User记录
             t = new Teacher();   // 创建实体对象
             t.setTeacherId(getNewTeacherId());
