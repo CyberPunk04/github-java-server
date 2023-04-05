@@ -1,6 +1,7 @@
 package org.fatmansoft.teach.repository;
 
 import org.fatmansoft.teach.models.Course;
+import org.fatmansoft.teach.models.Teacher;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -25,8 +26,13 @@ public interface CourseRepository extends JpaRepository<Course,Integer> {
    Optional<Course> findByCourseNum(String num);
 
 
+   Optional<Course> findByTeacher(Teacher teacher);
+
    Optional<Course> findByCourseName(String name);
 
+   List<Course> findByCourseType(String courseType);
+
+   List<Course> findByCourseStatus(String courseStatus);
    @Query(value = "from Course where ?1='' or courseNum like %?1% or courseName like %?1% ")
    List<Course> findCourseListByNumName(String numName);
 

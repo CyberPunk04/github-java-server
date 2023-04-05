@@ -3,11 +3,6 @@ package org.fatmansoft.teach.models;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 
-
-        import javax.persistence.*;
-        import javax.validation.constraints.NotBlank;
-        import javax.validation.constraints.Size;
-        import java.util.Date;
 /**
  * Student学生表实体类 保存每个学生的信息，
  * Integer studentId 用户表 student 主键 student_id
@@ -34,7 +29,6 @@ public class Teacher {
 
     @Size(max = 50)
     private String degree;
-
     public Integer getTeacherId() {
         return teacherId;
     }

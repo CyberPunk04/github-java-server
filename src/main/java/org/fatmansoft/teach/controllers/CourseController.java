@@ -3,11 +3,12 @@ package org.fatmansoft.teach.controllers;
 import org.fatmansoft.teach.models.*;
 import org.fatmansoft.teach.payload.request.DataRequest;
 import org.fatmansoft.teach.payload.response.DataResponse;
+import org.fatmansoft.teach.repository.CourseRepository;
+import org.fatmansoft.teach.repository.TeacherRepository;
 import org.fatmansoft.teach.util.CommonMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.fatmansoft.teach.repository.*;
 
 import javax.validation.Valid;
 import java.util.*;
@@ -21,6 +22,8 @@ public class CourseController {
     // CourseController中的方法可以直接使用
     @Autowired
     private CourseRepository courseRepository;
+    @Autowired
+    private TeacherRepository teacherRepository;
 
 
     public synchronized Integer getNewCourseId() {  //synchronized 同步方法
@@ -43,6 +46,10 @@ public class CourseController {
         Map m = new HashMap();
         if (c == null)
             return m;
+        Teacher t = c.getTeacher();
+       /* if(t == null){
+            return m;
+        }*/
         m.put("courseId", c.getCourseId());
         m.put("courseNum", c.getCourseNum());
         m.put("courseName", c.getCourseName());
@@ -52,7 +59,11 @@ public class CourseController {
         m.put("courseDesc", c.getCourseDesc());
         m.put("courseStatus", c.getCourseStatus());
         m.put("courseRemark", c.getCourseRemark());
-
+        if(t == null) {
+            return m;
+        }
+        m.put("teacherName", t.getPerson().getName());
+        m.put("teacherNum", t.getPerson().getNum());
         return m;
     }
 
@@ -126,8 +137,6 @@ public class CourseController {
      * @param dataRequest 从前端获取 courseId 查询主键
      * @return 根据courseId从数据库中查出数据，存在Map对象里，并返回前端
      */
-
-
     @PostMapping("/getCourseInfo")
     @PreAuthorize("hasRole('ADMIN')")
     public DataResponse getCourseInfo(@Valid @RequestBody DataRequest dataRequest) {
@@ -158,32 +167,62 @@ public class CourseController {
     @PreAuthorize(" hasRole('ADMIN')")
     public DataResponse courseEditSave(@Valid @RequestBody DataRequest dataRequest) {
         Integer courseId = dataRequest.getInteger("courseId");
+        //Integer teacherNum = dataRequest.getInteger("teacherNum");
+
         Map form = dataRequest.getMap("form"); //参数获取Map对象
-        String num = CommonMethod.getString(form, "courseNum");  //Map 获取属性的值
-        Course c = null;
-        Optional<Course> op;
-        if (courseId != null) {
+
+        String num = CommonMethod.getString(form, "courseNum");  //Map 获取课程序号属性的值
+        Course c;
+        //Teacher t = null;
+        //Optional<Course> op;
+        // Optional<Teacher> tOp;
+        /*if (courseId != null) {
             op = courseRepository.findById(courseId);  //查询对应数据库中主键为id的值的实体对象
             if (op.isPresent()) {
                 c = op.get();
             }
-        }
-        Optional<Course> nOp = courseRepository.findByCourseNum(num); //查询是否存在num的人员
-        if (nOp.isPresent()) {
-            if (c == null || !c.getCourseNum().equals(num)) {
+        }*/
+        /*if (teacherNum != null) {
+            tOp = teacherRepository.findById(teacherNum);  //查询对应数据库中主键为id的值的实体对象
+            if (tOp.isPresent()) {
+                t = tOp.get();
+            }
+        }*/
+        Optional<Course> op = courseRepository.findByCourseNum(num); //查询是否存在num的人员
+        if (op.isPresent()) {
+            c = op.get();
+            if (!c.getCourseId().equals(courseId)) {
                 return CommonMethod.getReturnMessageError("新课程号已经存在，不能添加或修改！");
             }
-        }
-        if (c == null) {
-            courseId = getNewCourseId();//获取Person新的主键，这个是线程同步问题;
-            c = new Course();
-            c.setCourseId(courseId);
-            c.setCourseNum(num);
-            courseRepository.saveAndFlush(c);  //插入新的Course记录
         } else {
-            courseId = c.getCourseId();
-            c.setCourseId(courseId);
+            c = new Course();
+            c.setCourseId(getNewCourseId());
+            c.setCourseNum(num);
         }
+        String teacherNum = CommonMethod.getString(form, "teacherNum");
+        String teacherName = CommonMethod.getString(form, "teacherName");
+        Optional<Teacher> tOp = teacherRepository.findByPersonNum(teacherNum); //查询是否存在num的人员
+        if (tOp.isEmpty()) {
+            return CommonMethod.getReturnMessageError("教师不存在或教工号输入有误，不能添加课程！");
+        }else {
+            Teacher t = tOp.get();
+            if (!t.getPerson().getName().equals(teacherName)) {
+                return CommonMethod.getReturnMessageError("教师姓名和教工号不匹配，请重新输入！");
+            }
+        }
+        Teacher t = tOp.get();
+        c.setCourseName(CommonMethod.getString(form, "courseName"));
+        c.setTeacher(t);
+        c.setCourseHour(CommonMethod.getString(form, "courseHour"));
+        c.setCourseType(CommonMethod.getString(form, "courseType"));
+        c.setCredit(CommonMethod.getString(form, "credit"));
+        c.setCourseStatus(CommonMethod.getString(form, "courseStatus"));
+        c.setCourseDesc(CommonMethod.getString(form, "courseDesc"));
+        c.setCourseRemark(CommonMethod.getString(form, "courseRemark"));
+        courseRepository.saveAndFlush(c);//插入新的Course记录
+        return CommonMethod.getReturnData(c.getCourseId()); //返回新的Course主键
+    }
+}
         /*if (!num.equals(c.getCourseNum())) {   //如果人员编号变化，修改人员编号和登录账号
             Optional<Course> uOp = courseRepository.findByCourseId(courseId);
             if (uOp.isPresent()) {
@@ -193,18 +232,4 @@ public class CourseController {
             }
             c.setCourseNum(num);  //设置属性
         }*/
-        c.setCourseName(CommonMethod.getString(form, "courseName"));
-        //c.setCourseName((String)form.get("courseName"));
-        c.setCourseHour(CommonMethod.getString(form, "courseHour"));
-        c.setCourseType(CommonMethod.getString(form, "courseType"));
-        c.setCredit(CommonMethod.getString(form, "credit"));
-        c.setCourseStatus(CommonMethod.getString(form, "courseStatus"));
-        c.setCourseDesc(CommonMethod.getString(form, "courseDesc"));
-        c.setCourseRemark(CommonMethod.getString(form, "courseRemark"));
 
-        courseRepository.save(c);  // 修改保存人员信息
-        return CommonMethod.getReturnData(c.getCourseId());
-    }
-
-
-}

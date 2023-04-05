@@ -7,6 +7,8 @@ import javax.validation.constraints.Size;
 /**
  * Course 课程表实体类  保存课程的的基本信息信息，
  * Integer courseId 人员表 course 主键 course_id
+ * Integer teacherId 教师编号 teacher_id
+ * String teacherName 教师姓名
  * String courseNum 课程编号
  * String courseName 课程名称
  * Integer credit 学分
@@ -15,6 +17,7 @@ import javax.validation.constraints.Size;
  * String courseDesc 课程描述
  * String getCourseStatus 课程状态
  * String courseRemark 课程备注
+ *
  * Course preCourse 前序课程 pre_course_id 关联前序课程的主键 course_id
  */
 @Entity
@@ -25,6 +28,11 @@ public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer courseId;
+    @ManyToOne
+    @JoinColumn(name = "teacher_id")
+    private Teacher teacher;
+   /* @Size(max = 50)
+    private String teacherName;*/
     @NotBlank
     @Size(max = 20)
     private String courseNum;
@@ -48,6 +56,13 @@ public class Course {
     @JoinColumn(name = "pre_course_id")
     private Course preCourse;
 
+    public Teacher getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
+    }
     public Integer getCourseId() {
         return courseId;
     }
@@ -55,8 +70,6 @@ public class Course {
     public void setCourseId(Integer courseId) {
         this.courseId = courseId;
     }
-
-
     public String getCourseNum() {
         return courseNum;
     }
@@ -64,6 +77,14 @@ public class Course {
     public void setCourseNum(String courseNum) {
         this.courseNum = courseNum;
     }
+
+    /*public String getTeacherName() {
+        return teacherName;
+    }
+
+    public void setTeacherName(String teacherName) {
+        this.teacherName = teacherName;
+    }*/
 
     public String getCourseName() {
         return courseName;
